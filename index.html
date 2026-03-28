@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>雙計數器系統 - React App</title>
+    <!-- 簡單的基礎樣式，讓畫面更美觀 -->
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        #root {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            padding: 20px;
+            max-width: 500px;
+            width: 90%;
+        }
+        
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        button:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <!-- React 應用程式的掛載點 -->
+    <div id="root"></div>
+
+    <!-- 引入必要的依賴 (使用 CDN) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.development.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.development.js"></script>
+    <!-- 引入 Babel，讓瀏覽器可以解析 JSX -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.min.js"></script>
+
+    <!-- 使用 Babel 來編譯 JSX 代碼 -->
+    <script type="text/babel">
+        // 這裡直接貼上您的 app.jsx 內容
+        const { useState, useEffect } = React;
+
+        // 子元件：純展示用，接收 props
+        const Display = ({ title, count }) => (
+            <div style={{ padding: '10px', border: '1px solid #ddd', margin: '5px' }}>
+                <h3>{title}</h3>
+                <p>目前計數：<strong>{count}</strong></p>
+            </div>
+        );
+
+        // 父元件：管理狀態與核心邏輯
+        const DualCounter = () => {
+            // 【Hook】useState 回傳 [State, Method]
+            const [workCount, setWorkCount] = useState(0);   // workCount = State, setWorkCount = Method
+            const [restCount, setRestCount] = useState(0);   // restCount = State, setRestCount = Method
+
+            // 【Hook】useEffect 監控狀態變化，執行副作用
+            useEffect(() => {
+                console.log(`[系統紀錄] 工作=${workCount}, 休息=${restCount}`);
+            }, [workCount, restCount]); // 依賴陣列：只要這兩個 State 任一個改變就執行
+
+            // 【Handler】事件處理函式：內部呼叫 Method 更新 State
+            const incrementWork = () => setWorkCount(prev => prev + 1);
+            const incrementRest = () => setRestCount(prev => prev + 1);
+
+            return (
+                <div style={{ padding: '20px' }}>
+                    <h1>雙計數器系統</h1>
+                    
+                    {/* 透過 Props 傳遞 State 給子元件 */}
+                    <Display title="工作任務數" count={workCount} />
+                    <Display title="休息次數" count={restCount} />
+                    
+                    {/* Event 綁定：onClick 事件觸發 Handler */}
+                    <button onClick={incrementWork}>增加工作任務</button>
+                    <button onClick={incrementRest}>增加休息次數</button>
+                </div>
+            );
+        };
+
+        // 將 React 元件渲染到 root 元素
+        ReactDOM.render(<DualCounter />, document.getElementById('root'));
+    </script>
+</body>
+</html>
